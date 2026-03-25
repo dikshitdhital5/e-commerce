@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+// App.jsx - FIXED (no duplicate imports)
+import React, { useState, useRef, useCallback } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -9,21 +10,52 @@ import Contact from './components/Contact';
 import CartModal from './components/CartModal';
 import QuickViewModal from './components/QuickViewModal';
 import Checkout from './components/Checkout';
-import { AuthProvider } from './context/AuthContext';
 import AuthModal from './components/AuthModal';
+import AdminPanel from './components/AdminPanel';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
-function App() {
+// Main App Content Component
+function AppContent() {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showQuickView, setShowQuickView] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const heroRef = useRef(null);
   const productsRef = useRef(null);
   const collectionRef = useRef(null);
   const aboutRef = useRef(null);
   const contactRef = useRef(null);
+
+  // Get user from auth context
+  const { user } = useAuth();
+
+  // Check if user is admin (for demo, any logged-in user can access admin via URL param)
+  const isAdmin = user?.email === 'admin@furniture.com' || window.location.hash === '#admin';
+
+  // Create stable callbacks
+  const handleOpenCheckout = useCallback(() => {
+    console.log('Opening checkout via callback');
+    setShowCheckout(true);
+  }, []);
+
+  const handleCloseCart = useCallback(() => {
+    console.log('Closing cart via callback');
+    setShowCart(false);
+  }, []);
+
+  // Add debug effect
+  React.useEffect(() => {
+    console.log('=== STATE CHANGES ===');
+    console.log('showCart:', showCart);
+    console.log('showCheckout:', showCheckout);
+    
+    if (showCheckout) {
+      console.log('🎉 CHECKOUT SHOULD BE VISIBLE NOW!');
+    }
+  }, [showCart, showCheckout]);
 
   const scrollToSection = (section) => {
     const refs = {
@@ -71,6 +103,58 @@ function App() {
     setCartItems([]);
   };
 
+  // Toggle admin panel (can be accessed via Ctrl+Shift+A or URL hash)
+  React.useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        setShowAdmin(prev => !prev);
+      }
+    };
+    
+    if (window.location.hash === '#admin') {
+      setShowAdmin(true);
+    }
+    
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
+  // Make setShowCheckout globally available
+  React.useEffect(() => {
+    window.forceOpenCheckout = () => {
+      console.log('Force opening checkout via window');
+      setShowCheckout(true);
+    };
+    return () => {
+      delete window.forceOpenCheckout;
+    };
+  }, []);
+
+  // If admin panel is shown, display it instead of main content
+  if (showAdmin && isAdmin) {
+    return (
+      <>
+        <div style={{ padding: '1rem', background: '#f5f5f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <button 
+            onClick={() => setShowAdmin(false)}
+            style={{
+              padding: '0.5rem 1rem',
+              background: '#8B7355',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            ← Back to Website
+          </button>
+          <span style={{ color: '#8B7355', fontWeight: 'bold' }}>Admin Mode</span>
+        </div>
+        <AdminPanel />
+      </>
+    );
+  }
+
   return (
     <div className="app">
       <Navbar 
@@ -108,12 +192,14 @@ function App() {
       {showCart && (
         <CartModal 
           cartItems={cartItems}
-          setShowCart={setShowCart}
-          setShowCheckout={setShowCheckout}
+          setShowCart={handleCloseCart}
+          setShowCheckout={handleOpenCheckout}
           updateQuantity={updateQuantity}
           removeFromCart={removeFromCart}
         />
       )}
+
+      
 
       {showQuickView && (
         <QuickViewModal 
@@ -131,8 +217,20 @@ function App() {
           clearCart={clearCart}
         />
       )}
-       <AuthModal />
+
+      <AuthModal />
+      
+   
     </div>
+  );
+}
+
+// Main App component with AuthProvider wrapper
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
