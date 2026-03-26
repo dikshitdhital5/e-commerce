@@ -265,6 +265,7 @@
   border-color: #8B7355;
   box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
   background: white;
+  color: black;
 }
 
 .form-group input.error,

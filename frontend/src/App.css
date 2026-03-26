@@ -2348,6 +2348,7 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #8B7355;
   box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
   background: white;
+  color: black;
 }
 
 .form-group input.error,
@@ -2742,6 +2743,12 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
   transform: rotate(90deg);
 }
+
+
+.qr-section, .upload-section h4{
+  color: black!important;
+}
+
 
 .qr-section,
 .upload-section {
