@@ -32,7 +32,7 @@ function AppContent() {
   // Get user from auth context
   const { user } = useAuth();
 
-  // Check if user is admin (for demo, any logged-in user can access admin via URL param)
+  // Check if user is admin 
   const isAdmin = user?.email === 'admin@furniture.com' || window.location.hash === '#admin';
 
   // Create stable callbacks

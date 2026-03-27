@@ -9,10 +9,10 @@
 
 :root {
   /* Light mode */
-  --primary: #aa3bff;
-  --primary-light: #c084fc;
-  --primary-dark: #8b2fd9;
-  --secondary: #6b6375;
+    --primary: #8B7355;
+  --primary-light: #D4B48C;
+  --primary-dark: #6B4F3A;
+  --secondary: #9B8A7A;
   --text: #08060d;
   --text-light: #6b6375;
   --bg: #ffffff;
@@ -68,11 +68,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #c084fc;
-    --primary-light: #d8b4fe;
-    --primary-dark: #a855f7;
-    --secondary: #9ca3af;
-    --text: #f3f4f6;
+    --primary: #8B7355;
+  --primary-light: #D4B48C;
+  --primary-dark: #6B4F3A;
+  --secondary: #9B8A7A;
+    --text: #e5c1a2;
     --text-light: #9ca3af;
     --bg: #16171d;
     --bg-alt: #1f2028;
